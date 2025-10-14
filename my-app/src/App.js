@@ -5,10 +5,13 @@ import './App.css';
 /*Converts json list into readable numbered object*/
 const dogs = [];
 Object.entries(dogsJson).forEach(([key, values]) => {
-  dogs.push(key)
-});
+  if (Array.isArray(values)) {
+    dogs.push([key,...values])
+  }else {
+    dogs.push(key)
+  }
 
-console.log(dogs);
+});
 
 
 const breakpointColumnsObj = {
@@ -21,16 +24,28 @@ const breakpointColumnsObj = {
 };
 // Convert array to JSX items
 const dogView = dogs.map(function(dog) {
+  if (dog.length===1) {
   return <div className="masonry-item">
   <div className="grid-item m-3">
     <div className="card bg-light text-dark">
       <div className="card-header"><strong>
-        {dog}
+        {dog[0]}
       </strong></div>
-      {/*}<ul className="list-group list-group-flush">
-        <li className="list-group-item">An item</li>
-      </ul>*/}
-    </div></div></div>
+    </div></div></div>}else {
+      var forEachData = [];
+      dog.forEach((d,index) => {if (d!=dog[0]) {forEachData.push(<li className="list-group-item" key={index}>{d}</li>)}});
+
+      return <div className="masonry-item">
+      <div className="grid-item m-3">
+        <div className="card bg-light text-dark">
+          <div className="card-header"><strong>
+            {dog[0]}
+          </strong></div>
+          <ul className="list-group list-group-flush">
+          {forEachData.map(d => {return d})}
+          </ul>
+        </div></div></div>
+    }
 });
 
 function App() {
