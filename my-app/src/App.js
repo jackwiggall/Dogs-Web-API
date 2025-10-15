@@ -31,7 +31,10 @@ function displayDogs(dogList) {
       <div className="card bg-light text-dark">
         <div className="card-header"><strong>
           {dog[0]}
-        </strong></div>
+        </strong>
+        <button className="px-2" style={{border:"none"}} onClick={() => {
+          deleteDog(dogList,index);
+        }}>X</button></div>
       </div></div></div>}else {
         var forEachData = [];
         dog.forEach((d,i) => {if (d!==dog[0]) {forEachData.push(<li className="list-group-item" key={i}>{d}</li>)}});
@@ -41,7 +44,10 @@ function displayDogs(dogList) {
           <div className="card bg-light text-dark">
             <div className="card-header"><strong>
               {dog[0]}
-            </strong></div>
+            </strong>
+            <button className="px-2" style={{border:"none"}} onClick={() => {
+              deleteDog(dogList,index);
+            }}>X</button></div>
             <ul className="list-group list-group-flush">
             {forEachData.map(d => {return d})}
             </ul>
@@ -51,10 +57,22 @@ function displayDogs(dogList) {
   return dogView;
 }
 
+function deleteDog(newList,index) {
+  if (index===0) {
+    newList = newList.slice(1, newList.length);
+  }else {
+    newList = [...newList.slice(0, index), ...newList.slice(index + 1)];
+  }
+  //need to change from page reload to state update
+  localStorage.setItem("dogList",JSON.stringify(newList));
+  window.location.reload(false);
+}
+
 function App() {
 var run = useRef(false);
 const [dogs, setDogs] = useState(dogTemp);
 const [dogView, setDogView] = useState();
+const [id, setID] = useState();
 
 if (!run.current) {
     //still runs twice, doesnt prevent single run
