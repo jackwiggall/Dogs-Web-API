@@ -3,8 +3,6 @@ import dogsJson from "./dogs.json"
 import { useRef, useState } from 'react'
 import './App.css';
 
-
-
 /*Converts json list into readable numbered object*/
 var dogTemp = [];
 Object.entries(dogsJson).forEach(([key, values]) => {
@@ -25,11 +23,33 @@ const breakpointColumnsObj = {
   500: 1
 };
 
-function displayDogs(dogView, dogList) {
+function displayDogs(dogList) {
+  let dogView = dogList.map(function(dog,index) {
+    if (dog.length===1) {
+    return <div className="masonry-item" key={index}>
+    <div className="grid-item m-3">
+      <div className="card bg-light text-dark">
+        <div className="card-header"><strong>
+          {dog[0]}
+        </strong></div>
+      </div></div></div>}else {
+        var forEachData = [];
+        dog.forEach((d,i) => {if (d!==dog[0]) {forEachData.push(<li className="list-group-item" key={i}>{d}</li>)}});
 
+        return <div className="masonry-item" key={index}>
+        <div className="grid-item m-3">
+          <div className="card bg-light text-dark">
+            <div className="card-header"><strong>
+              {dog[0]}
+            </strong></div>
+            <ul className="list-group list-group-flush">
+            {forEachData.map(d => {return d})}
+            </ul>
+          </div></div></div>
+      }
+  })
   return dogView;
 }
-
 
 function App() {
 var run = useRef(false);
@@ -39,36 +59,19 @@ const [dogView, setDogView] = useState();
 if (!run.current) {
     //still runs twice, doesnt prevent single run
     run.current = true;
-    // Convert array to JSX items
-    setDogView(dogTemp.map(function(dog,index) {
-      if (dog.length===1) {
-      return <div className="masonry-item" key={index}>
-      <div className="grid-item m-3">
-        <div className="card bg-light text-dark">
-          <div className="card-header"><strong>
-            {dog[0]}
-          </strong></div>
-        </div></div></div>}else {
-          var forEachData = [];
-          dog.forEach((d,i) => {if (d!==dog[0]) {forEachData.push(<li className="list-group-item" key={i}>{d}</li>)}});
-
-          return <div className="masonry-item" key={index}>
-          <div className="grid-item m-3">
-            <div className="card bg-light text-dark">
-              <div className="card-header"><strong>
-                {dog[0]}
-              </strong></div>
-              <ul className="list-group list-group-flush">
-              {forEachData.map(d => {return d})}
-              </ul>
-            </div></div></div>
-        }
-    }))
+    if (localStorage.getItem("dogList")===null) {
+        //list hasnt changed so use json script
+        localStorage.setItem("dogList",JSON.stringify(dogTemp));
+        setDogView(displayDogs(dogTemp));
+      }else {
+        //list has been used before so use local build
+        setDogView(displayDogs(JSON.parse(localStorage.getItem("dogList"))));
+        setDogs(JSON.parse(localStorage.getItem("dogList")));
+      }
   }
 
+/*Name of new entry*/
 const [name, setName] = useState('');
-const [artists, setArtists] = useState([]);
-
 
   return (
     <div className="App">
@@ -99,6 +102,8 @@ const [artists, setArtists] = useState([]);
                 onChange={e => setName(e.target.value)}
               />
               <button onClick={() => {
+                localStorage.setItem("dogList",JSON.stringify([...dogs,[name]]));
+                setDogs([...dogs,[name]]);
                 setDogView([
                   ...dogView,
                   <div className="masonry-item" key={nextId++}>
@@ -109,6 +114,7 @@ const [artists, setArtists] = useState([]);
                       </strong></div>
                     </div></div></div>
                 ]);
+
               }}>Add</button>
           </div>
           </div>
