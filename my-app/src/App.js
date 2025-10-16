@@ -37,7 +37,9 @@ function displayDogs(dogList) {
         }}>X</button></div>
       </div></div></div>}else {
         var forEachData = [];
-        dog.forEach((d,i) => {if (d!==dog[0]) {forEachData.push(<li className="list-group-item" key={i}>{d}</li>)}});
+        dog.forEach((d,i) => {if (d!==dog[0]) {forEachData.push(<li className="list-group-item" key={i}>{d}<button className="px-2" style={{border:"none"}} onClick={() => {
+          deleteDogBreed(dogList,dog,index,i);
+        }}>X</button></li>)}});
 
         return <div className="masonry-item" key={index}>
         <div className="grid-item m-3">
@@ -55,6 +57,16 @@ function displayDogs(dogList) {
       }
   })
   return dogView;
+}
+
+function deleteDogBreed(newList,dogs,index,i) {
+  //remove dog breed where the user has clicked from list
+  dogs = [...dogs.slice(0, i), ...dogs.slice(i + 1)];
+  newList[index] = dogs;
+
+  //need to change from page reload to state update
+  localStorage.setItem("dogList",JSON.stringify(newList));
+  window.location.reload(false);
 }
 
 function deleteDog(newList,index) {
@@ -129,7 +141,10 @@ const [name, setName] = useState('');
                     <div className="card bg-light text-dark">
                       <div className="card-header"><strong>
                         {name}
-                      </strong></div>
+                      </strong>
+                      <button className="px-2" style={{border:"none"}} onClick={() => {
+                        deleteDog(dogs,nextId);
+                      }}>X</button></div>
                     </div></div></div>
                 ]);
 
