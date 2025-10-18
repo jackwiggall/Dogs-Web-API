@@ -12,7 +12,6 @@ Object.entries(dogsJson).forEach(([key, values]) => {
     dogTemp.push(key)
   }
 });
-var nextId = dogTemp.length;
 
 const breakpointColumnsObj = {
   default: 5,
@@ -35,7 +34,7 @@ function displayDogs(dogList) {
         <button className="px-1" style={{border:"none"}} onClick={() => {
           deleteDog(dogList,index);
         }}>X</button>
-        <button className="px-1" style={{border:"none"}} onClick={() => {
+        <button className="px-1 mx-1" style={{border:"none"}} onClick={() => {
           newBreed(dogList,index);
         }}>\/</button></div>
       </div></div></div>}else {
@@ -54,7 +53,7 @@ function displayDogs(dogList) {
             <button className="px-1" style={{border:"none"}} onClick={() => {
               deleteDog(dogList,index);
             }}>X</button>
-            <button className="px-1" style={{border:"none"}} onClick={() => {
+            <button className="px-1 mx-1" style={{border:"none"}} onClick={() => {
               newBreed(dogList,index);
             }}>\/</button></div>
             <ul className="list-group list-group-flush">
@@ -68,7 +67,6 @@ function displayDogs(dogList) {
 
 function changeDog(list,value,index,i) {
   list[index][i] = value;
-  //need to change from page reload to state update
   localStorage.setItem("dogList",JSON.stringify(list));
 }
 
@@ -86,7 +84,11 @@ function deleteDog(newList,index) {
   if (index===0) {
     newList = newList.slice(1, newList.length);
   }else {
-    newList = [...newList.slice(0, index), ...newList.slice(index + 1)];
+    if (index===newList.length) {
+      newList = [...newList.slice(0, index)];
+    }else {
+      newList = [...newList.slice(0, index), ...newList.slice(index + 1)];
+    }
   }
   //need to change from page reload to state update
   localStorage.setItem("dogList",JSON.stringify(newList));
@@ -94,10 +96,16 @@ function deleteDog(newList,index) {
 }
 
 function newBreed(dogs,index) {
-  dogs[index] = [...dogs[index],""];
-
-  localStorage.setItem("dogList",JSON.stringify(dogs));
-  window.location.reload(false);
+  if (dogs!==JSON.parse(localStorage.getItem("dogList"))) {
+    let tempList = JSON.parse(localStorage.getItem("dogList"));
+    tempList[index] = [...tempList[index],""];
+    localStorage.setItem("dogList",JSON.stringify(tempList));
+    window.location.reload(false);
+  } else {
+    dogs[index] = [...dogs[index],""];
+    localStorage.setItem("dogList",JSON.stringify(dogs));
+    window.location.reload(false);
+  }
 }
 
 function App() {
@@ -106,7 +114,6 @@ const [dogs, setDogs] = useState(dogTemp);
 const [dogView, setDogView] = useState();
 
 if (!run.current) {
-    //still runs twice, doesnt prevent single run
     run.current = true;
     if (localStorage.getItem("dogList")===null) {
         //list hasnt changed so use json script
@@ -114,8 +121,14 @@ if (!run.current) {
         setDogView(displayDogs(dogTemp));
       }else {
         //list has been used before so use local build
-        setDogView(displayDogs(JSON.parse(localStorage.getItem("dogList"))));
-        setDogs(JSON.parse(localStorage.getItem("dogList")));
+        try {
+          setDogView(displayDogs(JSON.parse(localStorage.getItem("dogList"))));
+          setDogs(JSON.parse(localStorage.getItem("dogList")));
+        }catch {
+          //if something has gone wrong reset list
+          localStorage.setItem("dogList",JSON.stringify(dogTemp));
+          setDogView(displayDogs(dogTemp));
+        }
       }
   }
 
@@ -126,11 +139,11 @@ const [name, setName] = useState('');
     <div className="App">
       <header>
 
-        <div className="w3-main" style={{marginLeft:"10%",marginRight:"10%"}}>
+        <div className="main" style={{marginLeft:"10%",marginRight:"10%"}}>
 
           {/*<!-- Header -->*/}
-          <div className="w3-container" style={{marginTop:"80px"}}>
-            <h1 className="w3-jumbo text-light"><b>Dog Web API</b></h1>
+          <div className="container" style={{marginTop:"80px"}}>
+            <h1 className="jumbo text-light"><b>Dog Web API</b></h1>
             {/*<!--Page Title-->*/}
             <hr style={{width:"100%",border:"5px solid red"}} className="w3-round" />
           </div>
@@ -138,6 +151,16 @@ const [name, setName] = useState('');
           {/*<!-- Results-->*/}
           <div className="w3-container text-light p-2 mt-2" style={{marginTop:"80px",marginLeft:"10%",marginRight:"10%"}}>
             <h2>Dog Breeds:</h2>
+            <input
+              value={name}
+              onChange={e => setName(e.target.value)}
+            />
+            <button onClick={() => {
+              localStorage.setItem("dogList",JSON.stringify([[name],...dogs]));
+              window.location.reload(false);
+              //creating new items with state dont change when state does so deleting earlier items will clear all newly added ones
+
+            }}>Add</button>
 
               <Masonry
                 breakpointCols={breakpointColumnsObj}
@@ -146,34 +169,9 @@ const [name, setName] = useState('');
               >
                 {dogView}
               </Masonry>
-              <input
-                value={name}
-                onChange={e => setName(e.target.value)}
-              />
-              <button onClick={() => {
-                localStorage.setItem("dogList",JSON.stringify([...dogs,[name]]));
-                setDogs([...dogs,[name]]);
-                setDogView([
-                  ...dogView,
-                  <div className="masonry-item" key={nextId++}>
-                  <div className="grid-item m-3">
-                    <div className="card bg-light text-dark">
-                      <div className="card-header"><strong>
-                        <input style={{width:"70%"}} defaultValue={name} onChange={e => changeDog(dogs,e.target.value,nextId,0)} />
-                      </strong>
-                      <button className="px-1" style={{border:"none"}} onClick={() => {
-                        deleteDog(dogs,nextId);
-                      }}>X</button>
-                      <button className="px-1" style={{border:"none"}} onClick={() => {
-                        newBreed(dogs,nextId);
-                      }}>\/</button></div>
-                    </div></div></div>
-                ]);
 
-              }}>Add</button>
           </div>
           </div>
-
       </header>
     </div>
   );
