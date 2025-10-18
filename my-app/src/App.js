@@ -30,14 +30,18 @@ function displayDogs(dogList) {
     <div className="grid-item m-3">
       <div className="card bg-light text-dark">
         <div className="card-header"><strong>
-          {dog[0]}
+          <input style={{width:"70%"}} defaultValue={dog[0]} onChange={e => changeDog(dogList,e.target.value,index,0)} />
         </strong>
-        <button className="px-2" style={{border:"none"}} onClick={() => {
+        <button className="px-1" style={{border:"none"}} onClick={() => {
           deleteDog(dogList,index);
-        }}>X</button></div>
+        }}>X</button>
+        <button className="px-1" style={{border:"none"}} onClick={() => {
+          newBreed(dogList,index);
+        }}>\/</button></div>
       </div></div></div>}else {
         var forEachData = [];
-        dog.forEach((d,i) => {if (d!==dog[0]) {forEachData.push(<li className="list-group-item" key={i}>{d}<button className="px-2" style={{border:"none"}} onClick={() => {
+        dog.forEach((d,i) => {if (d!==dog[0]) {forEachData.push(<li className="list-group-item" key={i}><input style={{width:"75%"}} onChange={e => changeDog(dogList,e.target.value,index,i)} defaultValue={d} />
+        <button className="px-1 bg-white" style={{border:"none"}} onClick={() => {
           deleteDogBreed(dogList,dog,index,i);
         }}>X</button></li>)}});
 
@@ -45,11 +49,14 @@ function displayDogs(dogList) {
         <div className="grid-item m-3">
           <div className="card bg-light text-dark">
             <div className="card-header"><strong>
-              {dog[0]}
+              <input style={{width:"70%"}} defaultValue={dog[0]} onChange={e => changeDog(dogList,e.target.value,index,0)} />
             </strong>
-            <button className="px-2" style={{border:"none"}} onClick={() => {
+            <button className="px-1" style={{border:"none"}} onClick={() => {
               deleteDog(dogList,index);
-            }}>X</button></div>
+            }}>X</button>
+            <button className="px-1" style={{border:"none"}} onClick={() => {
+              newBreed(dogList,index);
+            }}>\/</button></div>
             <ul className="list-group list-group-flush">
             {forEachData.map(d => {return d})}
             </ul>
@@ -57,6 +64,12 @@ function displayDogs(dogList) {
       }
   })
   return dogView;
+}
+
+function changeDog(list,value,index,i) {
+  list[index][i] = value;
+  //need to change from page reload to state update
+  localStorage.setItem("dogList",JSON.stringify(list));
 }
 
 function deleteDogBreed(newList,dogs,index,i) {
@@ -80,11 +93,17 @@ function deleteDog(newList,index) {
   window.location.reload(false);
 }
 
+function newBreed(dogs,index) {
+  dogs[index] = [...dogs[index],""];
+
+  localStorage.setItem("dogList",JSON.stringify(dogs));
+  window.location.reload(false);
+}
+
 function App() {
 var run = useRef(false);
 const [dogs, setDogs] = useState(dogTemp);
 const [dogView, setDogView] = useState();
-const [id, setID] = useState();
 
 if (!run.current) {
     //still runs twice, doesnt prevent single run
@@ -140,11 +159,14 @@ const [name, setName] = useState('');
                   <div className="grid-item m-3">
                     <div className="card bg-light text-dark">
                       <div className="card-header"><strong>
-                        {name}
+                        <input style={{width:"70%"}} defaultValue={name} onChange={e => changeDog(dogs,e.target.value,nextId,0)} />
                       </strong>
-                      <button className="px-2" style={{border:"none"}} onClick={() => {
+                      <button className="px-1" style={{border:"none"}} onClick={() => {
                         deleteDog(dogs,nextId);
-                      }}>X</button></div>
+                      }}>X</button>
+                      <button className="px-1" style={{border:"none"}} onClick={() => {
+                        newBreed(dogs,nextId);
+                      }}>\/</button></div>
                     </div></div></div>
                 ]);
 
