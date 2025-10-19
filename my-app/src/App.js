@@ -29,12 +29,12 @@ function displayDogs(dogList) {
     <div className="grid-item m-3">
       <div className="card bg-light text-dark">
         <div className="card-header"><strong>
-          <input style={{width:"70%"}} defaultValue={dog[0]} onChange={e => changeDog(dogList,e.target.value,index,0)} />
+          <input style={{width:"73%"}} defaultValue={dog[0]} onChange={e => changeDog(dogList,e.target.value,index,0)} />
         </strong>
         <button className="px-1" style={{border:"none"}} onClick={() => {
           deleteDog(dogList,index);
         }}>X</button>
-        <button className="px-1 mx-1" style={{border:"none"}} onClick={() => {
+        <button className="px-1" style={{border:"none"}} onClick={() => {
           newBreed(dogList,index);
         }}>\/</button></div>
       </div></div></div>}else {
@@ -48,12 +48,12 @@ function displayDogs(dogList) {
         <div className="grid-item m-3">
           <div className="card bg-light text-dark">
             <div className="card-header"><strong>
-              <input style={{width:"70%"}} defaultValue={dog[0]} onChange={e => changeDog(dogList,e.target.value,index,0)} />
+              <input style={{width:"73%"}} defaultValue={dog[0]} onChange={e => changeDog(dogList,e.target.value,index,0)} />
             </strong>
             <button className="px-1" style={{border:"none"}} onClick={() => {
               deleteDog(dogList,index);
             }}>X</button>
-            <button className="px-1 mx-1" style={{border:"none"}} onClick={() => {
+            <button className="px-1" style={{border:"none"}} onClick={() => {
               newBreed(dogList,index);
             }}>\/</button></div>
             <ul className="list-group list-group-flush">
