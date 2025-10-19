@@ -22,11 +22,10 @@ jobs:
     steps:
     
     - name: Publish current workdir (which contains generated content) to GitHub Pages
-        uses: rayluo/github-pages-overwriter@v1.3
-
-        with:
-          source-directory: 'my-app'
-          target-branch: gh-pages
+      uses: rayluo/github-pages-overwriter@v1.3
+      with:
+        source-directory: 'my-app'
+        target-branch: gh-pages
           
     - uses: actions/checkout@v4
     - name: Use Node.js ${{ matrix.node-version }}
