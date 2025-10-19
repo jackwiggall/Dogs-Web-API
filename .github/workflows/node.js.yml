@@ -6,14 +6,13 @@ name: GitHub Pages
 on:
   push:
     branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./my-app
 
     strategy:
       matrix:
@@ -21,6 +20,7 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
+    - working-directory: ./my-app
     - uses: actions/checkout@v4
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
@@ -28,6 +28,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
           
+    - run: cd my-app
     - run: npm ci
     - run: npm run build --if-present
     - run: npm test
