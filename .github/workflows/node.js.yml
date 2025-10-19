@@ -28,4 +28,4 @@ jobs:
       - run: npm ci --prefix my-app
       - run: npm run build --if-present --prefix my-app
       - run: npm test --prefix my-app
-      - run: npm start
+      - run: npm start --prefix my-app
