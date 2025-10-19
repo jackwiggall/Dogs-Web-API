@@ -26,6 +26,6 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache-dependency-path: 'my-app'
           cache: 'npm'
-      - run: npm install
+      - run: npm install --prefix my-app
       - run: npm run build --if-present
       - run: npm test
